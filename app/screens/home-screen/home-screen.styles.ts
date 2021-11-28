@@ -1,5 +1,5 @@
-import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from 'react-native'
-import { COLORS, FONT_SIZE } from '@theme'
+import { ImageStyle, StyleSheet, ViewStyle } from 'react-native'
+import { COLORS } from '@theme'
 import { Device } from '@utils'
 
 export const circularImageSize = Device.verticalScale(100)
@@ -33,6 +33,10 @@ export const styles = StyleSheet.create({
   } as ImageStyle,
 
   BottomViewContainer: {
+    flex: 1
+  } as ViewStyle,
+
+  BottomViewSubContainer: {
     width: '100%',
     height: '100%',
     paddingTop: 100,

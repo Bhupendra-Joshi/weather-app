@@ -64,11 +64,10 @@ const HomeScreenComponent = () => {
 
   useEffect(() => {
     cities.forEach(async (city: any) => {
-      console.log(city)
       await fetchWeatherData(city)
     })
   }, [])
-  console.log(WeatherData)
+
   useAnimatedReaction(() => {
     return currentCityIndex.value
   }, (result, previous) => {
@@ -99,7 +98,7 @@ const HomeScreenComponent = () => {
 
         <CustomView style={styles.HeaderCircularImageContainer}>
           {
-            cities.map((city, index) => {
+            cities.map(city => {
               return (
                 <Animated.Image
                   key={city.key}
@@ -116,15 +115,15 @@ const HomeScreenComponent = () => {
         </CustomView>
 
         <CustomView
-          style={{ flex: 1 }}
+          style={styles.BottomViewContainer}
           onLayout={event => { animatedViewHeight.value = event.nativeEvent.layout.height }}
         >
           {
-            cities.map((city: any, index: number) =>
+            cities.map((city: any) =>
               (
                 <Animated.View
                   key={city.key}
-                  style={[styles.BottomViewContainer, containerAnimatedStyle]}
+                  style={[styles.BottomViewSubContainer, containerAnimatedStyle]}
                 >
                   <BottomView
                     city={city}
