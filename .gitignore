@@ -1,0 +1,39 @@
+# General
+#
+.DS_Store
+.expo
+.vscode
+*.jsbundle
+build
+node_modules
+npm-debug.log
+yarn-error.log
+.idea
+
+# XCode
+#
+ios/Pods
+DerivedData
+xcuserdata
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.xcuserstate
+!default.pbxuser
+!default.mode1v3
+!default.mode2v3
+!default.perspectivev3
+
+# Gradle
+#
+local.properties
+*.iml
+.gradle
+*.keystore
+*.aab
+*.apk

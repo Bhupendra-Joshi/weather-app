@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json.schemastore.org/solidaritySchema",
+  "requirements": {
+    "Node": [
+      {
+        "rule": "cli",
+        "binary": "node",
+        "semver": ">=14.15.4"
+      }
+    ],
+    "NPM": [
+      {
+        "rule": "cli",
+        "binary": "npm",
+        "version": "--version",
+        "semver": ">=6.14.10",
+        "platform": "darwin"
+      }
+    ]
+  }
+}
