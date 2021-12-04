@@ -3,62 +3,113 @@ import { useNavigation } from '@react-navigation/native'
 import { PanGestureHandler } from 'react-native-gesture-handler'
 import Animated, {
   runOnJS,
-  useAnimatedGestureHandler, useAnimatedReaction,
+  useAnimatedGestureHandler,
+  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated'
 
-import { CustomScreenHeader, CustomView, CustomImageBackground, } from '@components'
-import { fetchWeatherData, useWeatherDataStore } from '@store'
+import { CustomScreenHeader, CustomView, CustomImageBackground, CustomText } from '@components'
+import { fetchWeatherData } from '@store'
 import { cities, CityType, getCityInfo } from '@constants'
+import { Device } from '@utils'
 
-import { circularImageSize, styles } from './home-screen.styles'
-import { BottomView } from './components/bottom-view'
+import { CurrentWeatherView } from './components/current-weather-view'
+import { ForecastView } from './components/forecast-view'
+
+import { circularImageSize, styles, tabSliderOffset } from './home-screen.styles'
+
+const Tabs = [
+  {
+    key: 'CurrentWeatherView',
+    Component: CurrentWeatherView
+  },
+  {
+    key: 'ForecastView',
+    Component: ForecastView
+  }
+]
 
 const HomeScreenComponent = () => {
   const navigation:{ openDrawer:()=>void } = useNavigation()
 
-  const WeatherData: any = useWeatherDataStore()
-
   const [currentCity, setCurrentCity] = useState<CityType>('tokyo')
 
-  const animatedValue = useSharedValue(0)
+  const verticalAnimateValue = useSharedValue(0)
+  const horizontalAnimateValue = useSharedValue(0)
   const animatedViewHeight = useSharedValue(0)
   const currentCityIndex = useSharedValue(0)
-  const currentAnimatedOffset = useSharedValue(0)
+  const currentTabIndex = useSharedValue(0)
+  const currentVerticalAnimatedOffset = useSharedValue(0)
+  const currentHorizontalAnimatedOffset = useSharedValue(0)
 
   const onMenuPress = useRef(() => {
     navigation.openDrawer()
   }).current
 
   const gestureHandler = useAnimatedGestureHandler({
+    onStart: (event, context: any) => {
+      context.isHorizontal = Math.abs(event.translationY) < Math.abs(event.translationX)
+    },
+    onActive: (event, context: any) => {
+      if (context.isHorizontal) {
+        if (event.translationX > 0 && currentTabIndex.value === 0) {
+          context.ignore = true
+          return
+        } else if (event.translationX < 0 && currentTabIndex.value === (Tabs.length - 1)) {
+          context.ignore = true
+          return
+        }
+        context.ignore = false
+        horizontalAnimateValue.value = currentHorizontalAnimatedOffset.value + event.translationX
 
-    onActive: (event, ctx:{ignore:boolean}) => {
-      if (event.translationY > 0 && currentCityIndex.value === 0) {
-        ctx.ignore = true
-        return
-      } else if (event.translationY < 0 && currentCityIndex.value === (cities.length - 1)) {
-        ctx.ignore = true
-        return
+      } else {
+
+        if (event.translationY > 0 && currentCityIndex.value === 0) {
+          context.ignore = true
+          return
+        } else if (event.translationY < 0 && currentCityIndex.value === (cities.length - 1)) {
+          context.ignore = true
+          return
+        }
+        context.ignore = false
+        verticalAnimateValue.value = currentVerticalAnimatedOffset.value + event.translationY / 2
+
       }
-      ctx.ignore = false
-      animatedValue.value = currentAnimatedOffset.value + event.translationY / 2
-
     },
 
-    onEnd: (event, ctx) => {
-      if (!ctx.ignore) {
-        if (event.translationY < -animatedViewHeight.value / 2) {
-          currentCityIndex.value++
-          currentAnimatedOffset.value -= animatedViewHeight.value
-        } else if (event.translationY > animatedViewHeight.value / 2) {
-          currentCityIndex.value--
-          currentAnimatedOffset.value += animatedViewHeight.value
-        }
+    onEnd: (event, context: any) => {
+      if (!context.ignore) {
+        if (context.isHorizontal) {
 
-        animatedValue.value = withTiming(currentAnimatedOffset.value)
+          if (event.translationX < -Device.screenWidth / 2) {
+            currentHorizontalAnimatedOffset.value -= Device.screenWidth
+            currentTabIndex.value++
+          } else if (event.translationX > Device.screenWidth / 2) {
+            currentHorizontalAnimatedOffset.value += Device.screenWidth
+            currentTabIndex.value--
+          }
+
+          horizontalAnimateValue.value = withTiming(currentHorizontalAnimatedOffset.value)
+
+        } else {
+
+          if (event.translationY < -animatedViewHeight.value / 2) {
+            currentCityIndex.value++
+            currentVerticalAnimatedOffset.value -= animatedViewHeight.value
+          } else if (event.translationY > animatedViewHeight.value / 2) {
+            currentCityIndex.value--
+            currentVerticalAnimatedOffset.value += animatedViewHeight.value
+          }
+
+          verticalAnimateValue.value = withTiming(currentVerticalAnimatedOffset.value)
+
+        }
       }
+
+      context.isHorizontal = false
+
     },
   })
 
@@ -77,11 +128,31 @@ const HomeScreenComponent = () => {
   }, [currentCityIndex])
 
   const imageAnimatedStyle = useAnimatedStyle(() => {
-    return { transform: [{ translateY: circularImageSize * (animatedValue.value / (animatedViewHeight.value || 1)) }], }
+    return { transform: [{ translateY: circularImageSize * (verticalAnimateValue.value / (animatedViewHeight.value || 1)) }], }
   })
 
-  const containerAnimatedStyle = useAnimatedStyle(() => {
-    return { transform: [{ translateY: animatedValue.value }] }
+  const verticalAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateY: verticalAnimateValue.value },
+      ]
+    }
+  })
+
+  const horizontalAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateX: horizontalAnimateValue.value }
+      ]
+    }
+  })
+
+  const tabIndicatorAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateX: -tabSliderOffset * (horizontalAnimateValue.value / Device.screenWidth) }
+      ]
+    }
   })
 
   return (
@@ -103,10 +174,7 @@ const HomeScreenComponent = () => {
                 <Animated.Image
                   key={city.key}
                   source={city.image}
-                  style={[
-                    styles.HeaderCircularImage,
-                    imageAnimatedStyle
-                  ]}
+                  style={[styles.HeaderCircularImage, imageAnimatedStyle]}
                 />
               )
             })
@@ -118,21 +186,29 @@ const HomeScreenComponent = () => {
           style={styles.BottomViewContainer}
           onLayout={event => { animatedViewHeight.value = event.nativeEvent.layout.height }}
         >
+
           {
             cities.map((city: any) =>
               (
-                <Animated.View
-                  key={city.key}
-                  style={[styles.BottomViewSubContainer, containerAnimatedStyle]}
-                >
-                  <BottomView
-                    city={city}
-                    weatherData={WeatherData.weatherData[city.key]?.[0]}
-                  />
+                <Animated.View key={city.key} style={[styles.BottomViewVerticalContainer, verticalAnimatedStyle]}>
+                  <CustomText style={styles.Title}>{city.title}</CustomText>
+                    <CustomView style={styles.TabIndicatorContainer}>
+                      {
+                        Tabs.map(item => <CustomView key={item.key} style={styles.TabIndicator} />)
+                      }
+                      <Animated.View style={[styles.TabSlider, tabIndicatorAnimatedStyle]}/>
+
+                    </CustomView>
+                    <Animated.View style={[styles.BottomViewHorizontalContainer, horizontalAnimatedStyle]}>
+                    {
+                      Tabs.map(({ Component, key }) => <Component key={key} city={city}/>)
+                    }
+                  </Animated.View>
                 </Animated.View>
               )
             )
           }
+
         </CustomView>
 
       </Animated.View>

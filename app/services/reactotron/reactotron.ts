@@ -19,7 +19,7 @@ export const DEFAULT_REACTOTRON_CONFIG: ReactotronConfig = {
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-export const Reactotron = Tron
+Tron
   .configure(DEFAULT_REACTOTRON_CONFIG)
   .setAsyncStorageHandler(AsyncStorage)
   .useReactNative()

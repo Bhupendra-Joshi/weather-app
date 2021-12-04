@@ -6,7 +6,7 @@ import { weatherDataReducer } from './weather-data'
 import { appConfigReducer } from './app-config'
 
 const reducers = {
-  WorkerProfile: weatherDataReducer,
+  WeatherData: weatherDataReducer,
   AppConfig: appConfigReducer,
 }
 
@@ -16,7 +16,7 @@ const middleware = applyMiddleware(thunk)
 export const configureStore = () => createStore(rootStore, compose(middleware))
 
 export const useRootStore = () => useSelector((state: ObjectType) => state)
-export const useWeatherDataStore = () => useSelector((state: ObjectType) => state.WorkerProfile)
+export const useWeatherDataStore = () => useSelector((state: ObjectType) => state.WeatherData)
 export const useAppConfigStore = () => useSelector((state: ObjectType) => state.AppConfig)
 
 export * from 'react-redux'

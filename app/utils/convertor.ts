@@ -1,7 +1,13 @@
-export const convertCelsiusToFahrenheit = (celsius:number, decimalPlaces = 2) => {
-  return Number(((celsius * 9 / 5) + 32).toFixed(decimalPlaces))
-}
+import { TempType } from '@constants'
 
-export const convertFahrenheitToCelsius = (fahrenheit:number, decimalPlaces = 2) => {
-  return Number(((fahrenheit * -32) * 5 / 9).toFixed(decimalPlaces))
+export const convertCelsiusToOthers = (tempInCelsius:number, toUnit:TempType, decimalPlaces = 2) => {
+  if (tempInCelsius !== undefined && tempInCelsius !== null && !isNaN(tempInCelsius)) {
+    switch (toUnit) {
+      case 'celsius':
+        return Number(tempInCelsius.toFixed(decimalPlaces))
+      case 'fahrenheit':
+        return Number(((tempInCelsius * 9 / 5) + 32).toFixed(decimalPlaces))
+    }
+  }
+  return '-'
 }

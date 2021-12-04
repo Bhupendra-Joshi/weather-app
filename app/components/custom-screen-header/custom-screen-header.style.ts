@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native'
 
 import { COLORS, FONT_SIZE } from '@theme'
-import { Device } from '@utils'
 
 export const styles = StyleSheet.create({
   Container: {

@@ -16,6 +16,7 @@ export const WEEK_DAYS = [
 export const DATE_FORMAT = {
   'D_MMM_hh_mm_A': 'D.MMM | hh:mm A',
   'hh_mm': 'hh:mm A',
+  'D_MMM': 'D MMM',
 }
 
 export const formatDate = (inputDate:string|number, format = DATE_FORMAT.D_MMM_hh_mm_A) => {

@@ -1,29 +1,21 @@
 import React, { memo } from 'react'
 
-import { convertCelsiusToFahrenheit } from '@utils'
+import { convertCelsiusToOthers } from '@utils'
 import { CustomImage, CustomText, CustomView, Icon } from '@components'
 import { DEGREE, TempType, tempUnits } from '@constants'
-import { useAppConfigStore } from '@store'
-import { styles } from './bottom-view.styles'
+import { useAppConfigStore, useWeatherDataStore } from '@store'
 
-const BottomViewComponent = ({ weatherData, city }:any) => {
+import { styles } from './current-weather-view.styles'
+
+const CurrentWeatherViewComponent = ({ city }:any) => {
 
   const AppConfig: any = useAppConfigStore()
+  const WeatherData: any = useWeatherDataStore()
 
-  const getTemperature = () => {
-    let temp = 0
-    if (AppConfig.unit === 'celsius') {
-      temp = parseInt(weatherData?.tempCelsius)
-    } else {
-      temp = convertCelsiusToFahrenheit(weatherData?.tempCelsius, 0)
-    }
-    return isNaN(temp) ? '-' : temp
-  }
+  const weatherData = WeatherData.weatherData[city.key]?.[0]
 
   return (
     <CustomView style={styles.Container}>
-
-      <CustomText style={styles.Title}>{city.title}</CustomText>
 
       <CustomView style={styles.SubContainer}>
 
@@ -35,7 +27,7 @@ const BottomViewComponent = ({ weatherData, city }:any) => {
         </CustomView>
 
         <CustomView style={styles.TempContainer}>
-          <CustomText style={styles.Temp}>{getTemperature()}</CustomText>
+          <CustomText style={styles.Temp}>{convertCelsiusToOthers(weatherData?.tempCelsius, AppConfig.unit, 0)}</CustomText>
           <CustomText style={styles.TempUnit}>{DEGREE}{tempUnits[AppConfig.unit as TempType].short}</CustomText>
         </CustomView>
         <CustomText style={styles.WeatherCondition}>{weatherData?.conditions}</CustomText>
@@ -69,4 +61,4 @@ const BottomViewComponent = ({ weatherData, city }:any) => {
   )
 }
 
-export const BottomView = memo(BottomViewComponent)
+export const CurrentWeatherView = memo(CurrentWeatherViewComponent)

@@ -1,7 +1,6 @@
 import { Api } from '@services'
 
 import { StoreRef } from '../common-store'
-import { cities, CityType } from '@constants'
 
 export const WEATHER_DATA_STORE_ACTIONS = {
 

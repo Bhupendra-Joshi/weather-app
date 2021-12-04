@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import Animated, { SlideInLeft, SlideInRight } from 'react-native-reanimated'
+import Animated, { SlideInLeft } from 'react-native-reanimated'
 
 import { CustomView, CustomText, CustomImage, } from '@components'
 import { DEGREE } from '@constants'

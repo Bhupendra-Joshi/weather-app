@@ -1,5 +1,5 @@
 import { ApiService, APIResult, BaseApiHandler, API_STATUS, API_PATH } from '@services'
-import { convertCelsiusToFahrenheit, getIconUrl, getQueryString } from '@utils'
+import { getIconUrl, getQueryString } from '@utils'
 
 export class GetWeatherData implements BaseApiHandler {
   /**

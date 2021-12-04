@@ -4,16 +4,9 @@ import { Device } from '@utils'
 
 export const styles = StyleSheet.create({
   Container: {
-    flex: 1
+    width: Device.screenWidth,
+    height: '100%',
   } as ViewStyle,
-
-  Title: {
-    color: COLORS.palette.black,
-    fontWeight: 'bold',
-    fontSize: FONT_SIZE.LARGE_3X,
-    textAlign: 'center',
-    marginBottom: Device.verticalScale(10)
-  } as TextStyle,
 
   SubContainer: {
     flex: 1,
@@ -36,7 +29,8 @@ export const styles = StyleSheet.create({
     width: Device.verticalScale(70),
     borderRadius: Device.verticalScale(35),
     alignSelf: 'center',
-    backgroundColor: COLORS.palette.azure
+    backgroundColor: COLORS.palette.azure,
+    marginTop: Device.verticalScale(40)
   } as ImageStyle,
 
   TempContainer: {

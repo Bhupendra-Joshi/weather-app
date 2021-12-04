@@ -2,13 +2,13 @@ import React, { memo, useRef } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { useDrawerStatus } from '@react-navigation/drawer'
 
-import { CustomScreenHeader, CustomView, CustomFlatList } from '@components'
-import { useAppConfigStore, useWeatherDataStore } from '@store'
+import { CustomScreenHeader, CustomView, CustomFlatList, CustomText, CustomTouchableOpacity } from '@components'
+import { setTempUnit, useAppConfigStore, useWeatherDataStore } from '@store'
+import { cities, DEGREE, TempType, tempUnits } from '@constants'
+import { convertCelsiusToOthers } from '@utils'
 
-import { styles } from './weather-list-screen.styles'
-import { cities } from '@constants'
-import { convertCelsiusToFahrenheit } from '@utils'
 import { WeatherListItem } from './components/weather-list-item'
+import { styles } from './weather-list-screen.styles'
 
 const CityWeatherListScreenComponent = () => {
   const navigation = useNavigation()
@@ -21,15 +21,18 @@ const CityWeatherListScreenComponent = () => {
     navigation.goBack()
   }).current
 
+  const switchTempUnit = useRef((tempKey: string) => {
+    setTempUnit(tempKey as TempType)
+  }).current
+
   const renderItem = ({ item, index }: any) => {
     const data = WeatherData.weatherData[item.key]?.[0]
 
     if (data) {
-      const temp = AppConfig.unit === 'celsius' ? data.tempCelsius : convertCelsiusToFahrenheit(data.tempCelsius)
       return (
         <WeatherListItem
           index={index}
-          temperature={temp}
+          temperature={`${convertCelsiusToOthers(data.tempCelsius, AppConfig.unit)}`}
           cityName={item.title}
           conditions={data.conditions}
           conditionImageUrl={data.conditionsIcon}
@@ -50,6 +53,22 @@ const CityWeatherListScreenComponent = () => {
           ? (<CustomFlatList data={cities} renderItem={renderItem} />)
           : null
       }
+
+      <CustomView style={styles.TempSwitchContainer}>
+        {
+          Object.keys(tempUnits).map((key:string) => {
+            return (
+              <CustomTouchableOpacity style={styles.TempSwitchButton} key={key} onPress={() => switchTempUnit(key)}>
+                <CustomText style={key === AppConfig.unit ? styles.TempSwitchTextBold : styles.TempSwitchText}>
+                  {DEGREE}{tempUnits[key as TempType].short}
+                </CustomText>
+              </CustomTouchableOpacity>
+            )
+          })
+        }
+
+      </CustomView>
+
     </CustomView>
   )
 }

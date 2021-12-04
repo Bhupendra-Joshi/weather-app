@@ -16,7 +16,7 @@ export const RootNavigation = () => {
 
   return (
     <>
-      <SafeAreaView style={styles.Container}>
+      <SafeAreaView style={styles.Container} >
         <StatusBar barStyle={'light-content'}/>
         <Drawer.Navigator
           screenOptions={{

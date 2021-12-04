@@ -14,6 +14,6 @@ const setTempUnitAction = (unit:TempType) => {
   }
 }
 
-export const setTempUnit = async (unit: TempType) => {
+export const setTempUnit = (unit: TempType) => {
   StoreRef.dispatch(setTempUnitAction(unit))
 }
